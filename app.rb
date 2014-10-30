@@ -1,5 +1,6 @@
 require "sinatra"
 require "haml"
+require "json"
 require "sinatra/reloader" if development?
 
 def deserialize_params(params)
@@ -12,11 +13,12 @@ end
 
 helpers do
   def serialize_params(h)
-    p = h.map do |k, v|
-      "#{k}=#{Array(v).join("|")}" unless Array(v).empty?
-    end.compact.join("&").prepend("?")
+    s = {}
+    h.map do |k, v|
+      s[k] = Array(v).join("|") unless Array(v).empty?
+    end
 
-    p == "?" ? "" : p
+    s.to_json
   end
 
   # generate a new query string based on the current state of
@@ -67,8 +69,8 @@ before do
     "color"    => %w(red green purple),
     "material" => %w(wood glass metal stone),
     "style" => %w(classic modern),
-    "price" => ["50-100", "100-500"],
-
+    "size" => %w(minature small medium large oversize),
+    "price" => ["50-100", "100-300", "300-500"],
   }
 end
 
