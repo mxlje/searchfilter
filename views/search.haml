@@ -1,0 +1,35 @@
+%h1 Search
+
+.form-wrap
+  %form#search
+
+    - @filters.each_with_index do |fcat, i|
+      - filter_name = fcat[0]
+
+      %fieldset{id: "filter-#{filter_name}"}
+
+        - fcat[1].each_with_index do |f, i|
+          .filter
+            - e_id = "filter-#{filter_name}-#{i}"
+            - checked = @params[filter_name].include?(f) rescue false
+            
+
+            %input.f-checkbox{:type => "checkbox", id: e_id, checked: checked, data: {query: new_filter_query(filter_name, f)}}
+            %label{:for => e_id}= f
+            %code= new_filter_query(filter_name, f)
+
+      -# @colors.each do |color|
+
+        - checked = @params['color'].include?(color)
+        - element_id = "f-color-#{color}"
+        - tmp_values = @params['color']
+        - value = tmp_values.include?(color) ? tmp_values - [color] : tmp_values | [color]
+        - new_query = "/search?color=" + serialize_params(value)
+
+        %input.f-checkbox{id: element_id, :name => "color[]", :type => "checkbox", value: serialize_params(value), checked: checked, data: {value: new_query}}
+        %label{:for => element_id}= color
+        %br
+
+
+
+%script{src: "/search.js"}
