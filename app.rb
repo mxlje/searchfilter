@@ -5,7 +5,7 @@ require "sinatra/reloader" if development?
 def deserialize_params(params)
   params.map do |p|
     {
-      p[0] => p[1].split("|")
+      p[0] => (p[1].split("|") rescue []) # return empty values if filter param is broken
     }
   end.reduce(Hash.new, :merge)
 end
@@ -68,7 +68,7 @@ before do
     "material" => %w(wood glass metal stone),
     "style" => %w(classic modern),
     "price" => ["50-100", "100-500"],
-    
+
   }
 end
 
