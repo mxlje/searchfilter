@@ -15,26 +15,12 @@
             - e_id = "filter-#{filter_name}-#{i}"
             -# get state for current filter
             - checked = @params[filter_name].include?(f) rescue false
+            
             - query = new_filter_query(filter_name, f)
             
             %input.f-checkbox{:type => "checkbox", id: e_id, checked: checked, data: {query: query}}
             %label{:for => e_id}= f
             %code= query
-
           
-%script{src: "http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js" }
-
-:javascript
-  $('.f-checkbox').click(function(e) {
-    var query = $(this).data('query');
-    var $fieldset = $(this).parent().parent();
-
-    $.each(query, function(k,v){
-      var $input = $('<input type="hidden">');
-      $input.attr('name', k);
-      $input.attr('value', v);
-      $fieldset.append($input);
-    });
-
-    $('#search').submit();
-  })
+%script{src: "/jquery.min.js" }
+%script{src: "/search.js"}

@@ -3,23 +3,10 @@
   %head
     %meta{:charset => "UTF-8"}/
     %title Search Params Example
-    :css
-      body {
-        color: #2c3e50;
-        font-family: Helvetiva, Arial, sans-serif;
-      }
-      a { color: #27ae60; }
-      hr {
-        border: none;
-        height: 1px;
-        background: #eee;
-      }
-      fieldset { border: 1px solid #eee; margin-bottom:15px}
-      label, .f-checkbox {cursor:pointer}
-      label:hover {color:#27ae60}
-      .filter {display:block}
+    %link{:rel => "stylesheet", :href => "/style.css"}
 
   %body
     %pre= @params
     %hr/
+
     = yield
