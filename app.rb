@@ -19,31 +19,45 @@ helpers do
     p == "?" ? "" : p
   end
 
+  # generate a new query string based on the current state of
+  # self and other filters. This method is called for each listed
+  # value
   def new_filter_query(filter_name, current_value)
-    # check if the filter is currently requested 
-    final = {}
+    query = Hash.new
 
+    # If the current filter value is not active,
+    # the value for the new query is simply self
     if !@params[filter_name]
-      final[filter_name] = current_value
+      query[filter_name] = current_value
     end
 
+    # For the values currently in the params hash,
+    # loop over all of them and merge with the value
+    # for the filter tag currently being generated
     @params.each do |key, current_values|
       new_values = []
 
+      # if it is selected it gets removed from the new query
       if current_values.include?(current_value)
         new_values = current_values - [current_value]
+
       else
-        if @filters[key].include?(current_value)
+        # otherwise we check if the value is defined as part of
+        # the filter section we’re currently in. If it is, we merge
+        # the currently selected one with the one in the current loop
+        is_valid_filter = @filters[key].include?(current_value) rescue false
+        if is_valid_filter
           new_values = current_values | [current_value]
-        else
+        else # if it’s not part of the section there is no merge
           new_values = current_values
         end
       end
 
-      final[key] = new_values
+      query[key] = new_values
     end
 
-    serialize_params(final)
+    # generate an actual URL query string
+    serialize_params(query)
   end
 end
 
@@ -53,7 +67,8 @@ before do
     "color"    => %w(red green purple),
     "material" => %w(wood glass metal stone),
     "style" => %w(classic modern),
-    "price" => ["50-100", "100-500"]
+    "price" => ["50-100", "100-500"],
+    
   }
 end
 
