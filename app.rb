@@ -64,7 +64,6 @@ helpers do
 end
 
 before do
-  @params = deserialize_params(params)
   @filters = {
     "color"    => %w(red green purple),
     "material" => %w(wood glass metal stone),
@@ -74,10 +73,46 @@ before do
   }
 end
 
+enable :sessions
+
 get '/' do
   redirect '/search', 302
 end
 
 get '/search' do
+  @params = session[:qs]
   haml :search
+end
+
+
+
+
+def parse_json_qs(json)
+  query = Hash.new
+  qs = JSON.parse(json)
+  
+  qs.each do |k, v|
+    v = v.is_a?(String) ? v.split("|") : ""
+    query[k] = v
+  end
+
+  query
+end
+
+post '/search/filter' do
+  querystring = params["qs"].to_s
+  # session[:qs] = querystring
+
+  session[:qs] = parse_json_qs(querystring)
+  
+  redirect '/search', 303
+end 
+
+post '/search/clear' do
+  session[:qs] = {}
+  redirect '/search', 303
+end
+
+post '/inspect' do
+  params.to_json
 end

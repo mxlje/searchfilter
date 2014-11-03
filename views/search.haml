@@ -1,10 +1,13 @@
 %h1 Search
 
-.fieldset
-  %a{:href => "/search"} &times; Clear selection
+%form{:action => "/search/clear", method: "POST"}
+  .fieldset
+    %button.btn{type: "submit"} &times; Clear selection
 
 .form-wrap
-  %form#search{action: "/search"}
+  %form#search{action: "/search/filter", method: "POST"}
+
+    %input{:type => "hidden", value: "search", name: "source"}/
 
     -# loop over filter categories
     - @filters.each_with_index do |fcat, i|
@@ -17,13 +20,17 @@
           .filter
             - e_id = "filter-#{filter_name}-#{i}"
             -# get state for current filter
+            - state = @params[filter_name].include?(f) ? "active" : "inactive" rescue "inactive"
             - checked = @params[filter_name].include?(f) rescue false
             
             - query = new_filter_query(filter_name, f)
             
-            %input.f-checkbox{:type => "checkbox", id: e_id, checked: checked, data: {query: query}}
-            %label{:for => e_id}= f
+            %input{:type => "checkbox", checked: checked, disabled: true}
+            %button.btn{type: "submit", name: "qs", value: query, class: "btn-#{state}"}= f
+
             %code= query
-          
-%script{src: "/jquery.min.js" }
-%script{src: "/search.js"}
+      
+
+-#
+  %script{src: "/jquery.min.js" }
+  %script{src: "/search.js"}
