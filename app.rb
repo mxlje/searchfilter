@@ -80,7 +80,7 @@ get '/' do
 end
 
 get '/search' do
-  @params = session[:qs]
+  @params = session[:qs] || {}
   haml :search
 end
 
