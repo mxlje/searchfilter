@@ -3,15 +3,19 @@ require "haml"
 require "json"
 require "sinatra/reloader" if development?
 
-def deserialize_params(params)
-  params.map do |p|
-    {
-      p[0] => (p[1].split("|") rescue []) # return empty values if filter param is broken
-    }
-  end.reduce(Hash.new, :merge)
-end
-
 helpers do
+  def parse_json_qs(json)
+    query = Hash.new
+    qs = JSON.parse(json)
+    
+    qs.each do |k, v|
+      v = v.is_a?(String) ? v.split("|") : ""
+      query[k] = v
+    end
+
+    query
+  end
+
   def serialize_params(h)
     s = {}
     h.map do |k, v|
@@ -63,17 +67,19 @@ helpers do
   end
 end
 
+# Use Rack::Session for filter session storage
+enable :sessions
+
 before do
+  # All allowed filters
   @filters = {
     "color"    => %w(red green purple),
     "material" => %w(wood glass metal stone),
-    "style" => %w(classic modern),
-    "size" => %w(minature small medium large oversize),
-    "price" => ["50-100", "100-300", "300-500"],
+    "style"    => %w(classic modern),
+    "size"     => %w(minature small medium large oversize),
+    "price"    => ["50-100", "100-300", "300-500"],
   }
 end
-
-enable :sessions
 
 get '/' do
   redirect '/search', 302
@@ -84,35 +90,23 @@ get '/search' do
   haml :search
 end
 
-
-
-
-def parse_json_qs(json)
-  query = Hash.new
-  qs = JSON.parse(json)
-  
-  qs.each do |k, v|
-    v = v.is_a?(String) ? v.split("|") : ""
-    query[k] = v
-  end
-
-  query
-end
-
+# Extract new qs values from form submission and save to session
 post '/search/filter' do
   querystring = params["qs"].to_s
-  # session[:qs] = querystring
-
   session[:qs] = parse_json_qs(querystring)
   
   redirect '/search', 303
 end 
 
+
+
+# DEV clear session
 post '/search/clear' do
   session[:qs] = {}
   redirect '/search', 303
 end
 
+# DEV inspect raw form submission
 post '/inspect' do
   params.to_json
 end
