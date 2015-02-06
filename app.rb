@@ -68,7 +68,9 @@ helpers do
 end
 
 # Use Rack::Session for filter session storage
-enable :sessions
+use Rack::Session::Cookie, :key => 'rack.session',
+                           :path => '/',
+                           :secret => 'i am so secret'
 
 before do
   # All allowed filters
