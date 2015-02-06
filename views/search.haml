@@ -1,13 +1,15 @@
-%h1 Search
+.title
+  %h1 Search
+  %a.subtitle{href: "https://github.com/mxlje/searchfilter"} mxlje/searchfilter
 
-%form{:action => "/search/clear", method: "POST"}
+%form{action: "/search/clear", method: "POST"}
   .fieldset
     %button.btn{type: "submit"} &times; Clear selection
 
 .form-wrap
   %form#search{action: "/search/filter", method: "POST"}
 
-    %input{:type => "hidden", value: "search", name: "source"}/
+    %input{type: "hidden", value: "search", name: "source"}
 
     -# loop over filter categories
     - @filters.each_with_index do |fcat, i|
@@ -18,19 +20,12 @@
         -# create checkboxes for each filter
         - fcat[1].each_with_index do |f, i|
           .filter
-            - e_id = "filter-#{filter_name}-#{i}"
             -# get state for current filter
-            - state = @params[filter_name].include?(f) ? "active" : "inactive" rescue "inactive"
+            - state   = @params[filter_name].include?(f) ? "active" : "inactive" rescue "inactive"
             - checked = @params[filter_name].include?(f) rescue false
+            - query   = new_filter_query(filter_name, f)
             
-            - query = new_filter_query(filter_name, f)
-            
-            %input{:type => "checkbox", checked: checked, disabled: true}
-            %button.btn{type: "submit", name: "qs", value: query, class: "btn-#{state}"}= f
+            %input{type: "checkbox", checked: checked, disabled: true}
+            %button{type: "submit", name: "qs", value: query, class: "btn btn-#{state}"}= f
 
             %code= query
-      
-
--#
-  %script{src: "/jquery.min.js" }
-  %script{src: "/search.js"}
