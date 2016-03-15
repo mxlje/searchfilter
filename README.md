@@ -1,6 +1,6 @@
 # Search-Filter Params
 
-**Demo:** https://mxsearchfilter.vdtapp.com/search
+**Demo:** https://pagespeed.io/resources/searchfilter
 
 This is a demo and proof of concept for restructuring search filter
 setups in big ecommerce stores or large websites to avoid creating
