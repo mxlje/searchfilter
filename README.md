@@ -1,6 +1,6 @@
 # Search-Filter Params
 
-**Demo:** https://pagespeed.io/resources/searchfilter
+**Demo and better explanation:** https://pagespeed.io/resources/searchfilter
 
 This is a demo and proof of concept for restructuring search filter
 setups in big ecommerce stores or large websites to avoid creating
